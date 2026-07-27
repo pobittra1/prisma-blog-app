@@ -20,6 +20,7 @@
   },
   "homepage": "https://github.com/pobittra1/prisma-blog-app#readme",
   "devDependencies": {
+    "@types/cors": "^2.8.19",
     "@types/express": "^5.0.6",
     "@types/node": "^26.1.1",
     "@types/pg": "^8.20.0",
