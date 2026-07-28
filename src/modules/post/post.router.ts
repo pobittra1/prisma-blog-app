@@ -10,6 +10,18 @@ const auth = (...roles: any) => {
         const session = await betterAuth.api.getSession({
             headers: req.headers as any
         })
+        if (!session) {
+            return res.status(401).json({
+                success: false,
+                message: "You are not authorized"
+            })
+        }
+        if (!session.user.emailVerified) {
+            return res.status(403).json({
+                success: false,
+                message: "Email verification required"
+            })
+        }
         console.log(session);
 
     }
