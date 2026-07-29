@@ -15,6 +15,7 @@ const getAllPost = async (payload: { search: string | undefined }) => {
     const allPost = await prisma.post.findMany({
         where: {
             // search base on title or content
+            // title, content, tags => OR, has
             OR: [
                 {
                     title: {
@@ -26,6 +27,12 @@ const getAllPost = async (payload: { search: string | undefined }) => {
                     content: {
                         contains: payload.search as string,
                         mode: "insensitive"
+                    }
+                },
+                {
+                    tags: {
+                        // searching base on [] array value like this
+                        has: payload.search as string
                     }
                 }
             ]
