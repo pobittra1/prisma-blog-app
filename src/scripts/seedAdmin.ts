@@ -9,7 +9,7 @@ async function seedAdmin() {
             name: "Admin tayu",
             email: "admin@admin.com",
             role: UserRole.ADMIN,
-            password: "admin"
+            password: "admin1234"
         }
         // check user exist on db or not
         const existingUser = await prisma.user.findUnique({
@@ -24,12 +24,14 @@ async function seedAdmin() {
         const signUpAdmin = await fetch("http://localhost:3000/api/auth/sign-up/email", {
             method: "POST",
             headers: {
-                "Content-Type": "application/json"
+                "Content-Type": "application/json",
             },
             body: JSON.stringify(adminData)
         })
-
+        console.log(signUpAdmin);
     } catch (err) {
         console.log(err);
     }
 }
+
+seedAdmin();
