@@ -4,14 +4,15 @@ import { UserRole } from "../middlewares/auth";
 
 async function seedAdmin() {
     try {
-
+        console.log("********Admin seeding started.......");
         const adminData = {
-            name: "Admin1 tayu",
-            email: "admin1@admin.com",
+            name: "Admin2 tayu",
+            email: "admin2@admin.com",
             role: UserRole.ADMIN,
             password: "admin1234",
             emailVerified: true
         }
+        console.log("*******cheking admin exist or not");
         // check user exist on db or not
         const existingUser = await prisma.user.findUnique({
             where: {
@@ -30,7 +31,23 @@ async function seedAdmin() {
             },
             body: JSON.stringify(adminData)
         })
-        console.log(signUpAdmin);
+
+
+        if (signUpAdmin.ok) {
+            console.log("***admin created");
+            await prisma.user.update({
+                where: {
+                    email: adminData.email
+                },
+                data: {
+                    emailVerified: true
+                }
+            })
+
+            console.log("*******email verification status updated");
+        }
+
+        console.log("success");
     } catch (err) {
         console.log(err);
     }
