@@ -48,7 +48,10 @@ const getAllPost = async (req: Request, res: Response) => {
 
         const skip = (page - 1) * limit;
 
-        const result = await postService.getAllPost({ search: searchString, tags, isFeatured, status, authorId, page, limit, skip });
+        const shortBy = req.query.shortBy as string | undefined;
+        const shortOrder = req.query.orderBy as string | undefined;
+
+        const result = await postService.getAllPost({ search: searchString, tags, isFeatured, status, authorId, page, limit, skip, shortBy, shortOrder });
         res.status(200).json(result);
 
     } catch (err) {

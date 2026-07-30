@@ -12,7 +12,7 @@ const createPost = async (data: Omit<Post, "id" | "createdAt" | "updatedAt" | "a
     return result;
 }
 
-const getAllPost = async ({ search, tags, isFeatured, status, authorId, page, limit, skip }: {
+const getAllPost = async ({ search, tags, isFeatured, status, authorId, page, limit, skip, shortBy, shortOrder }: {
     search: string | undefined,
     tags: string[] | [],
     isFeatured: boolean | undefined,
@@ -20,7 +20,9 @@ const getAllPost = async ({ search, tags, isFeatured, status, authorId, page, li
     authorId: string | undefined,
     page: number,
     limit: number,
-    skip: number
+    skip: number,
+    shortBy: string | undefined,
+    shortOrder: string | undefined
 }) => {
 
     const andConditions: PostWhereInput[] = [];
@@ -78,7 +80,12 @@ const getAllPost = async ({ search, tags, isFeatured, status, authorId, page, li
             // search base on title or content
             // title, content, tags => OR, has
             AND: andConditions
-        }
+        },
+        orderBy:
+            shortBy && shortOrder ? {
+                [shortBy]: shortOrder
+            } : { createdAt: "desc" }
+
     });
 
     return allPost;
