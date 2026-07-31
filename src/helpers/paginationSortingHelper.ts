@@ -5,6 +5,8 @@ type IOptions = {
     sortBy?: string;
 }
 
-const paginationSortingHelper = () => {
-
+const paginationSortingHelper = (options: IOptions) => {
+    console.log(options);
 }
+
+export default paginationSortingHelper;
