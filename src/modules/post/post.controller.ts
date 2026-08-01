@@ -70,7 +70,12 @@ const getAllPost = async (req: Request, res: Response) => {
 // get post using id
 const getPostById = async (req: Request, res: Response) => {
     try {
-        const result = await postService.getPostById();
+        // here "postId" is like variable from router file ":postId".
+        const { postId } = req.params;
+        if (!postId) {
+            throw new Error("Post id is required!")
+        }
+        const result = await postService.getPostById(postId as string);
         res.status(200).json(result);
     } catch (err) {
         res.status(400).json({
