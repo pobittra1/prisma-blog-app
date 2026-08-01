@@ -66,7 +66,22 @@ const getAllPost = async (req: Request, res: Response) => {
     }
 }
 
+
+// get post using id
+const getPostById = async (req: Request, res: Response) => {
+    try {
+        const result = await postService.getPostById();
+        res.status(200).json(result);
+    } catch (err) {
+        res.status(400).json({
+            error: "Post creation failed",
+            details: err
+        })
+    }
+}
+
 export const PostController = {
     createPost,
-    getAllPost
+    getAllPost,
+    getPostById
 }

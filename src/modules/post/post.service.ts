@@ -103,6 +103,13 @@ const getAllPost = async ({ search, tags, isFeatured, status, authorId, page, li
     };
 }
 
+
+// get post using id
+
+const getPostById = async () => {
+    console.log("get post by id");
+}
+
 export const postService = {
-    createPost, getAllPost
+    createPost, getAllPost, getPostById
 }
