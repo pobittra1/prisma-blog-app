@@ -85,8 +85,22 @@ const getAllPost = async ({ search, tags, isFeatured, status, authorId, page, li
             [sortBy]: sortOrder
         }
     });
+    const total = await prisma.post.count({
+        where: {
 
-    return allPost;
+            // search base on title or content
+            // title, content, tags => OR, has
+            AND: andConditions
+        },
+
+    })
+    return {
+        data: allPost,
+        total,
+        page,
+        limit,
+        totalPages: Math.ceil(total / limit)
+    };
 }
 
 export const postService = {
