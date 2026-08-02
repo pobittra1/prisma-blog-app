@@ -49,6 +49,17 @@ const getCommentsOfAuthor = async (authorId: string) => {
         where: {
             // if comment field name and param value name same so add authorId only
             authorId
+        },
+        orderBy: {
+            createdAt: "desc"
+        },
+        include: {
+            post: {
+                select: {
+                    id: true,
+                    title: true
+                }
+            }
         }
     })
 }
