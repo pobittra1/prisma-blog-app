@@ -45,7 +45,12 @@ const getCommentById = async (commentId: string) => {
 
 
 const getCommentsOfAuthor = async (authorId: string) => {
-    console.log({ authorId });
+    return await prisma.comment.findMany({
+        where: {
+            // if comment field name and param value name same so add authorId only
+            authorId
+        }
+    })
 }
 
 export const ComemntService = {
