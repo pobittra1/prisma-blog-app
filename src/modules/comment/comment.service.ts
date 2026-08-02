@@ -64,8 +64,33 @@ const getCommentsOfAuthor = async (authorId: string) => {
     })
 }
 
+// 2 condition
+// user must logged in and own comment or not verify it.
+const deleteComment = async (commentId: string, authorId: string) => {
+    const commentData = await prisma.comment.findFirst({
+        where: {
+            id: commentId,
+            authorId
+        },
+        select: {
+            id: true
+        }
+    })
+    if (!commentData) {
+        throw new Error("Your provided input is invalid!");
+    }
+
+    return await prisma.comment.delete({
+        where: {
+            id: commentData.id
+        }
+    })
+
+}
+
 export const ComemntService = {
     createComment,
     getCommentById,
-    getCommentsOfAuthor
+    getCommentsOfAuthor,
+    deleteComment
 }
