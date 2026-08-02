@@ -108,43 +108,56 @@ const getAllPost = async ({ search, tags, isFeatured, status, authorId, page, li
 // get post using id
 
 const getPostById = async (postId: string) => {
-    return await prisma.$transaction(async (tx) => {
-        await tx.post.update({
-            where: {
-                id: postId
-            },
-            data: {
-                views: {
-                    increment: 1
-                }
-            }
-        })
-        const postData = await tx.post.findUnique({
-            where: {
-                id: postId
-            },
-            include: {
-                comments: {
-                    where: {
-                        parentId: null,
-                        status: CommentStatus.APPROVED
-                    },
-                    include: {
-                        where: {
-                            status: CommentStatus.APPROVED
-                        },
-                        replies: {
-                            include: {
-                                replies: true,
-                                status: CommentStatus.APPROVED
-                            }
-                        }
+    try {
+        return await prisma.$transaction(async (tx) => {
+            await tx.post.update({
+                where: {
+                    id: postId
+                },
+                data: {
+                    views: {
+                        increment: 1
                     }
                 }
-            }
+            })
+            const postData = await tx.post.findUnique({
+                where: {
+                    id: postId
+                },
+                include: {
+                    comments: {
+                        where: {
+                            parentId: null,
+                            status: "APPROVED",
+                        },
+                        orderBy: { createdAt: "desc" },
+                        include: {
+                            replies: {
+                                where: {
+                                    status: "APPROVED",
+                                },
+                                orderBy: { createdAt: "asc" },
+                                include: {
+                                    replies: {
+                                        where: {
+                                            status: "APPROVED"
+                                        },
+                                        orderBy: { createdAt: "asc" },
+                                    },
+                                },
+                            },
+                        },
+                    },
+                    _count: {
+                        select: { comments: true }
+                    }
+                }
+            })
+            return postData;
         })
-        return postData;
-    })
+    } catch (err) {
+        console.log(err);
+    }
     // return result;
 }
 
