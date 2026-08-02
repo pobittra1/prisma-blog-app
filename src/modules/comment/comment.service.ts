@@ -25,6 +25,12 @@ const createComment = async (payload: {
     })
 }
 
+
+const getCommentById = async (commentId: string) => {
+    console.log("comment id: ", commentId);
+}
+
 export const ComemntService = {
-    createComment
+    createComment,
+    getCommentById
 }
