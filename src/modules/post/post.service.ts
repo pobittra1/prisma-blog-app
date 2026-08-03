@@ -2,6 +2,7 @@ import { CommentStatus } from './../../../generated/prisma/enums';
 import { Post, PostStatus } from "../../../generated/prisma/client";
 import { PostWhereInput } from "../../../generated/prisma/models";
 import { prisma } from "../../lib/prisma";
+import { UserRole } from '../../middlewares/auth';
 
 const createPost = async (data: Omit<Post, "id" | "createdAt" | "updatedAt" | "authorId">, userId: string) => {
     const result = await prisma.post.create({
@@ -273,13 +274,18 @@ const deletePost = async (postId: string, authorId: string, isAdmin: boolean) =>
 const getStats = async () => {
     // postCount, publishedPost, draftPosts, totalComments, totallViews
     return await prisma.$transaction(async (tx) => {
-        const [totalPosts, publishedPost, draftPost, archivedPost, totalComments, approvedComments] = await Promise.all([
+        const [totalPosts, publishedPost, draftPost, archivedPost, totalComments, approvedComments, rejectedComments, totalUser, totalAdmin, totalAllUsers, totalViews] = await Promise.all([
             await tx.post.count(),
             await tx.post.count({ where: { status: PostStatus.PUBLISHED } }),
             await tx.post.count({ where: { status: PostStatus.DRAFT } }),
             await tx.post.count({ where: { status: PostStatus.ARCHIVED } }),
             await tx.comment.count(),
             await tx.comment.count({ where: { status: CommentStatus.APPROVED } }),
+            await tx.comment.count({ where: { status: CommentStatus.REJECT } }),
+            await tx.user.count({ where: { role: UserRole.USER } }),
+            await tx.user.count({ where: { role: UserRole.ADMIN } }),
+            await tx.user.count(),
+            await tx.post.aggregate({ _sum: { views: true } })
         ])
 
         return {
@@ -288,7 +294,12 @@ const getStats = async () => {
             draftPost,
             archivedPost,
             totalComments,
-            approvedComments
+            approvedComments,
+            rejectedComments,
+            totalUser,
+            totalAdmin,
+            totalAllUsers,
+            totalViews: totalViews._sum.views
         }
     })
 
