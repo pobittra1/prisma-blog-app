@@ -167,6 +167,16 @@ const getPostById = async (postId: string) => {
 }
 
 const getMyPosts = async (authorId: string) => {
+    // if user authorized and status active then exucute next line either throw an error.
+    await prisma.user.findUniqueOrThrow({
+        where: {
+            id: authorId,
+            status: "ACTIVE"
+        },
+        select: {
+            id: true
+        }
+    })
     const result = await prisma.post.findMany({
         where: {
             authorId
