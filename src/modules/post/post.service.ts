@@ -215,20 +215,27 @@ const getMyPosts = async (authorId: string) => {
     };
 }
 
-
-const updatePost = async (postId: string, updatedPostData: Partial<Post>, authorId: string) => {
-    const postData = await prisma.post.findUnique({
+// user can update only own post and idFeatured field can't update.
+// admin can all update.
+const updatePost = async (postId: string, updatedPostData: Partial<Post>, authorId: string, isAdmin: boolean) => {
+    const postData = await prisma.post.findUniqueOrThrow({
         // check here 2 validation= id and authorId need to exists
         where: {
-            id: postId,
-            authorId
+            id: postId
+
         },
         select: {
-            id: true
+            id: true,
+            authorId: true
         }
     })
-    if (!postData) {
+    if (!isAdmin && (postData.authorId !== authorId)) {
         throw new Error("You can't update another user post!");
+    }
+
+    // here user can.t update isFeatured field value
+    if (!isAdmin) {
+        delete updatedPostData.isFeatured;
     }
 
     const result = await prisma.post.update({
