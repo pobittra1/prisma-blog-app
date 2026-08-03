@@ -7,6 +7,7 @@ const router = express.Router();
 router.get("/", PostController.getAllPost);
 router.get("/my-posts", auth(UserRole.USER, UserRole.ADMIN), PostController.getMyposts);
 
+router.get("/stats", auth(UserRole.ADMIN), PostController.getStats);
 router.post("/", auth(UserRole.USER, UserRole.ADMIN), PostController.createPost);
 router.get("/:postId", PostController.getPostById);
 router.patch("/:postId", auth(UserRole.USER, UserRole.ADMIN), PostController.updatePost);
