@@ -219,7 +219,6 @@ const getMyPosts = async (authorId: string) => {
 // admin can all update.
 const updatePost = async (postId: string, updatedPostData: Partial<Post>, authorId: string, isAdmin: boolean) => {
     const postData = await prisma.post.findUniqueOrThrow({
-        // check here 2 validation= id and authorId need to exists
         where: {
             id: postId
 
@@ -248,10 +247,34 @@ const updatePost = async (postId: string, updatedPostData: Partial<Post>, author
     return result;
 }
 
+
+const deletePost = async (postId: string, authorId: string, isAdmin: boolean) => {
+    const postData = await prisma.post.findUniqueOrThrow({
+        where: {
+            id: postId
+
+        },
+        select: {
+            id: true,
+            authorId: true
+        }
+    })
+    if (!isAdmin && (postData.authorId !== authorId)) {
+        throw new Error("You can't delete another user post!");
+    }
+
+    return await prisma.post.delete({
+        where: {
+            id: postId
+        }
+    })
+}
+
 export const postService = {
     createPost,
     getAllPost,
     getPostById,
     getMyPosts,
-    updatePost
+    updatePost,
+    deletePost
 }
