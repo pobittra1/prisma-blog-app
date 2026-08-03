@@ -90,7 +90,7 @@ const getMyposts = async (req: Request, res: Response) => {
         if (!user) {
             throw new Error("You are unauthorized!")
         }
-        console.log(user);
+
         const result = await postService.getMyPosts(user.id);
         res.status(200).json(result);
     } catch (err) {
@@ -100,10 +100,29 @@ const getMyposts = async (req: Request, res: Response) => {
         })
     }
 }
+const updatePost = async (req: Request, res: Response) => {
+    try {
+        const user = req.user;
+        if (!user) {
+            throw new Error("You are unauthorized!")
+        }
+        const { postId } = req.params;
+        const updatedPostData = req.body;
+        const result = await postService.updatePost(postId as string, updatedPostData, user.id);
+        res.status(200).json(result);
+    } catch (err) {
+        const errorMessage = (err instanceof Error) ? err.message : "Post update failed!"
+        res.status(400).json({
+            error: errorMessage,
+            details: err
+        })
+    }
+}
 
 export const PostController = {
     createPost,
     getAllPost,
     getPostById,
-    getMyposts
+    getMyposts,
+    updatePost
 }

@@ -215,6 +215,36 @@ const getMyPosts = async (authorId: string) => {
     };
 }
 
+
+const updatePost = async (postId: string, updatedPostData: Partial<Post>, authorId: string) => {
+    const postData = await prisma.post.findUnique({
+        // check here 2 validation= id and authorId need to exists
+        where: {
+            id: postId,
+            authorId
+        },
+        select: {
+            id: true
+        }
+    })
+    if (!postData) {
+        throw new Error("You can't update another user post!");
+    }
+
+    const result = await prisma.post.update({
+        where: {
+            id: postData.id
+        },
+        data: updatedPostData
+    })
+
+    return result;
+}
+
 export const postService = {
-    createPost, getAllPost, getPostById, getMyPosts
+    createPost,
+    getAllPost,
+    getPostById,
+    getMyPosts,
+    updatePost
 }
