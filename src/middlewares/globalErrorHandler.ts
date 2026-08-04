@@ -47,6 +47,7 @@ function errorHandler(
             statusCode = 401;
             errorMessage = "Can't reach database server!";
         }
+        // default error for PrismaClientInitializationError
         else {
             statusCode = 500;
             errorMessage = "The service is temporarily unavailable. Please try again later.!";

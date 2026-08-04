@@ -66,7 +66,7 @@ const getAllPost = async (req: Request, res: Response) => {
 
 
 // get post using id
-const getPostById = async (req: Request, res: Response) => {
+const getPostById = async (req: Request, res: Response, next: NextFunction) => {
     try {
         // here "postId" is like variable from router file ":postId".
         const { postId } = req.params;
@@ -76,10 +76,7 @@ const getPostById = async (req: Request, res: Response) => {
         const result = await postService.getPostById(postId as string);
         res.status(200).json(result);
     } catch (err) {
-        res.status(400).json({
-            error: "Post creation failed",
-            details: err
-        })
+        next(err);
     }
 }
 const getMyposts = async (req: Request, res: Response) => {
@@ -134,16 +131,12 @@ const deletePost = async (req: Request, res: Response) => {
         })
     }
 }
-const getStats = async (req: Request, res: Response) => {
+const getStats = async (req: Request, res: Response, next: NextFunction) => {
     try {
         const result = await postService.getStats();
         res.status(200).json(result);
     } catch (err) {
-        const errorMessage = (err instanceof Error) ? err.message : "stats fetched failed!"
-        res.status(400).json({
-            error: errorMessage,
-            details: err
-        })
+        next(err);
     }
 }
 
