@@ -30,6 +30,28 @@ function errorHandler(
             errorMessage = "Foreign key constraint failed!";
         }
     }
+    else if (err instanceof Prisma.PrismaClientUnknownRequestError) {
+        statusCode = 500;
+        errorMessage = "Error occured during query exucution!";
+    }
+    else if (err instanceof Prisma.PrismaClientRustPanicError) {
+        statusCode = 500;
+        errorMessage = "Something went wrong on our end. Please try again later!";
+    }
+    else if (err instanceof Prisma.PrismaClientInitializationError) {
+        if (err.errorCode === "P1000") {
+            statusCode = 401;
+            errorMessage = "Authentication failed. Please check your crendentials!";
+        }
+        else if (err.errorCode === "P1001") {
+            statusCode = 401;
+            errorMessage = "Can't reach database server!";
+        }
+        else {
+            statusCode = 500;
+            errorMessage = "The service is temporarily unavailable. Please try again later.!";
+        }
+    }
     res.status(statusCode);
     res.json({
         message: errorMessage,
